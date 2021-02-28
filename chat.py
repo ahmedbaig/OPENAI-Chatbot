@@ -5,15 +5,14 @@ import openai
 openai.api_key = os.environ.get('OPENAI_KEY')
 completion = openai.Completion()
 
-logs = open("whatsapp_bot.log", "r")
-global_chat_log = logs.read()
-
 start_chat_log = '''Human: Hello, who are you?
 Davinci: I am doing great. How can I help you today?
 '''
 
-def log_append(log):
-    with open("whatsapp_bot.log", "a") as myfile:
+def log_append(log, number):
+    file = f'{number}.log'
+    mode = 'a' if os.path.exists(file) else 'w'
+    with open(file, mode) as myfile:
         myfile.write(log)
 
 def ask_davinci(question, chat_log=None):
@@ -28,9 +27,9 @@ def ask_davinci(question, chat_log=None):
     answer = response.choices[0].text.strip()
     return answer
 
-def append_interaction_to_chat_log(question, answer, chat_log=None, questioner='Human', responder='Davinci'):
+def append_interaction_to_chat_log(question, answer, chat_log=None, questioner='Human', responder='Davinci', from_number=0):
     if chat_log is None:
         chat_log = start_chat_log
-    log_append(f'{questioner}: {question}\n{responder}: {answer}\n')
+    log_append(f'{questioner}: {question}\n{responder}: {answer}\n', from_number)
     return f'{chat_log}{questioner}: {question}\n{responder}: {answer}\n'
 
