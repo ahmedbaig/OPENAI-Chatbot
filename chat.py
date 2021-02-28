@@ -8,6 +8,10 @@ completion = openai.Completion()
 logs = open("whatsapp_bot.log", "r")
 global_chat_log = logs.read()
 
+start_chat_log = '''Human: Hello, who are you?
+Davinci: I am doing great. How can I help you today?
+'''
+
 def log_append(log):
     with open("whatsapp_bot.log", "a") as myfile:
         myfile.write(log)
@@ -16,11 +20,11 @@ def ask_davinci(question, chat_log=None):
     if chat_log is None:
         chat_log = start_chat_log
     chat_log = (chat_log[:1000] + '..') if len(chat_log) > 1000 else chat_log
-    prompt = f'{chat_log}Human: {question}\nDavinci:'
+    prompt = f'{chat_log}Human: {question}\nAI:'
     response = completion.create(
-        prompt=prompt, engine="davinci", stop=['\Human'], temperature=0.9,
+        prompt=prompt, engine="davinci", stop=['\nHuman'], temperature=0.9,
         top_p=1, frequency_penalty=0, presence_penalty=0.6, best_of=1,
-        max_tokens=150)
+        max_tokens=510)
     answer = response.choices[0].text.strip()
     return answer
 
